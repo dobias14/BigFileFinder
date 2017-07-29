@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{READ_EXTERNAL_STORAGE},REQUEST_READ_EXTERNAL_STORAGE);
             }
             finish();
+            return;
             //onCreate(savedInstanceState);
         }
         root = Environment.getExternalStorageDirectory();
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity
                     Log.d("Snackbar 1", "onClickSnackbar: "+item);
                 }
                 for (File scanFile : scanFiles) {
-                    Log.d("Snackbar 2", "onClickSnackbar: "+scanFile.getName());
+                    Log.d("Snackbar 2", "onClickSnackbar: "+scanFile.getAbsolutePath()+"is directory? "+scanFile.isDirectory());
                 }
                 //TODO Create Intent for handle files and number of files
             }
@@ -110,9 +111,10 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 DummyContent.ClearItems();
                 root = Environment.getExternalStorageDirectory();
+                DummyContent.addItem(DummyContent.createDummyItem("..",root.getParent(),0,false,true));
                 walk(root);
                 TextView textView =(TextView) findViewById(R.id.PathOfFiles);
-                textView.setText(root.getAbsolutePath());
+                textView.setText("Current directory:\n"+root.getAbsolutePath());
                 ItemFragment fragment = (ItemFragment) getFragmentManager().findFragmentById(R.id.fragment);
                 fragment.UpdateItems();
             }
@@ -214,7 +216,7 @@ public class MainActivity extends AppCompatActivity
         if (item.isDirectory){
             DummyContent.ClearItems();
             TextView textView =(TextView) findViewById(R.id.PathOfFiles);
-            textView.setText(item.path);
+            textView.setText("Current directory:\n"+item.path);
             //DummyContent.addItem(DummyContent.createDummyItem("..", root.getAbsolutePath(),0,false,true));
             root = new File(item.path);
             //if (!item.path.equals(Environment.getExternalStorageDirectory().getAbsolutePath())) {
