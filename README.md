@@ -42,6 +42,18 @@ For Android platform, it is possible to use any SDK (4.0 and higher).
 
 * * *
 
+- Screenshots
+
+![Screen1.png](https://github.com/dobias14/BigFileFinder/blob/master/Screen1.png)
+
+*Screen with folders displayed*
+
+![Screen2.png](https://github.com/dobias14/BigFileFinder/blob/master/Screen2.png)
+
+*Screen with selected folders and picker with number of files to be filtred. Below that is result of the search*
+
+* * *
+
 The reasons for creating this project are explained more here: [Mobile Developer for Android](https://join.eset.com/en/challenges/mobile-developer-androi)![Enjoy safer technology](http://www.eset-la.com/images/logo-eset-facebook.png)
 
 
