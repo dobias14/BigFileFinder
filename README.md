@@ -22,8 +22,27 @@ Dynamic list of directories where the files shall be searched for (possibility t
 
 Output is the list of N biggest files including the size and full path.
 
+- Evaluation
+
+The following will be evaluated:
+Functionality of application.
+Effectiveness (memory, speed), the programming techniques and structures used.
+
+Source code quality and software design of the solution.
+
+- Bonus:
+
+Good-looking and functional Android UI.
+Possibility of parallel search in case directories are located on various physical media, i.e. internal vs. external SD card.
+
+- Tools
+
+For Android platform, it is possible to use any SDK (4.0 and higher).
+
+
 * * *
 
 The reasons for creating this project are explained more here: [Mobile Developer for Android](https://join.eset.com/en/challenges/mobile-developer-androi)![Enjoy safer technology](http://www.eset-la.com/images/logo-eset-facebook.png)
+
 
 
