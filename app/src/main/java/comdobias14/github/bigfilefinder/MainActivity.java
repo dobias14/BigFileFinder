@@ -1,6 +1,7 @@
 package comdobias14.github.bigfilefinder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -94,14 +95,20 @@ public class MainActivity extends AppCompatActivity
                     Snackbar.make(view, "Pick atleast 1 file/folder", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 }
-                for (DummyContent.DummyItem item : DummyContent.ITEMS) {
-                    if (item.checked)
-                    Log.d("Snackbar 1", "onClickSnackbar: "+item);
+                else {
+                    for (DummyContent.DummyItem item : DummyContent.ITEMS) {
+                        if (item.checked)
+                        Log.d("Snackbar 1", "onClickSnackbar: "+item);
+                    }
+                    for (File scanFile : scanFiles) {
+                        Log.d("Snackbar 2", "onClickSnackbar: "+scanFile.getAbsolutePath()+"is directory? "+scanFile.isDirectory());
+                    }
+                    // TODO: Create Intent for handle files and number of files
+                    Intent intent = new Intent(MainActivity.this,SearchActivity.class);
+                    intent.putExtra("DATA",scanFiles);
+                    MainActivity.this.startActivity(intent);
                 }
-                for (File scanFile : scanFiles) {
-                    Log.d("Snackbar 2", "onClickSnackbar: "+scanFile.getAbsolutePath()+"is directory? "+scanFile.isDirectory());
-                }
-                //TODO Create Intent for handle files and number of files
+
             }
         });
 
