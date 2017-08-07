@@ -50,7 +50,7 @@ For Android platform, it is possible to use any SDK (4.0 and higher).
 
 ![Screen2.png](https://github.com/dobias14/BigFileFinder/blob/master/Screen2.png)
 
-*Screen with selected folders and picker with number of files to be filtred. Below that is result of the search*
+*Screen with selected folders and picker with number of files to be filtered. Below that is result of the search*
 
 * * *
 

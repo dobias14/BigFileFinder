@@ -16,7 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="0.5"
-        app:srcCompat="@drawable/ic_folder_black_24dp" />
+        app:srcCompat="@drawable/ic_folder_black_24dp"
+        android:contentDescription="@string/folder_icon" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,19 +29,17 @@
             android:id="@+id/id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Name"
+            android:text="@string/name"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:textSize="20dp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Path"
+            android:text="@string/path"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:textSize="14dp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
 </LinearLayout>

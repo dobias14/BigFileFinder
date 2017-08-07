@@ -10,10 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
-import comdobias14.github.bigfilefinder.dummy.DummyContent;
-import comdobias14.github.bigfilefinder.dummy.DummyContent.DummyItem;
+import comdobias14.github.bigfilefinder.FileStructure.FileContent.FileItem;
 
 /**
  * A fragment representing a list of Items.
@@ -23,12 +20,11 @@ import comdobias14.github.bigfilefinder.dummy.DummyContent.DummyItem;
  */
 public class ItemFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
+
     private OnListFragmentInteractionListener mListener;
-    public MyItemRecyclerViewAdapter myItemRecyclerViewAdapter;
+    private MyItemRecyclerViewAdapter myItemRecyclerViewAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -37,7 +33,6 @@ public class ItemFragment extends Fragment {
     public ItemFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static ItemFragment newInstance(int columnCount) {
         ItemFragment fragment = new ItemFragment();
@@ -70,17 +65,10 @@ public class ItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            myItemRecyclerViewAdapter = new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener);
+            myItemRecyclerViewAdapter = new MyItemRecyclerViewAdapter(mListener);
             recyclerView.setAdapter(myItemRecyclerViewAdapter);
         }
         return view;
-    }
-
-    public void swapItems(List<DummyContent> items) {
-        /*for (DummyItem dummyItem :  = items) {
-            DummyContent.ITEMS = dummyItem;
-        }
-        notifyDataSetChanged();*/
     }
 
     public void UpdateItems(){
@@ -122,7 +110,6 @@ public class ItemFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(FileItem item);
     }
 }

@@ -1,6 +1,5 @@
 package comdobias14.github.bigfilefinder;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -19,9 +18,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 
-import comdobias14.github.bigfilefinder.dummy.DummyContent;
-
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import comdobias14.github.bigfilefinder.FileStructure.FileContent;
 
 public class MainActivity extends AppCompatActivity
         implements ItemFragment.OnListFragmentInteractionListener {
@@ -30,25 +27,23 @@ public class MainActivity extends AppCompatActivity
     private File root;
     public static ArrayList<File> scanFiles;
     public static CounterVariable counter;
-    public static Context context;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         scanFiles = new ArrayList<>();
-        context = getApplicationContext();
 
         counter = new CounterVariable();
         counter.setListener(new CounterVariable.ChangeListener() {
             @Override
             public void onChange() {
                 TextView textView =(TextView) findViewById(R.id.NumberOfFiles);
-                textView.setText(scanFiles.size()+" items selected");
+                textView.setText(getResources().getQuantityString(R.plurals.numberOfFiles, scanFiles.size(),scanFiles.size()));
             }
         });
 
-        if (ActivityCompat.checkSelfPermission(MainActivity.this, READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -57,14 +52,14 @@ public class MainActivity extends AppCompatActivity
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{READ_EXTERNAL_STORAGE},REQUEST_READ_EXTERNAL_STORAGE);
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},REQUEST_READ_EXTERNAL_STORAGE);
             }
             finish();
             return;
         }
         root = Environment.getExternalStorageDirectory();
         Log.d("walker", "onCreate: "+root.getAbsolutePath());
-        DummyContent.addItem(DummyContent.createDummyItem("..",root.getParent(),0,false,true));
+        FileContent.addItem(FileContent.createFileItem(getString(R.string.parent_directory),root.getParent(),0, true));
         ScanFolder(root);
 
         setContentView(R.layout.activity_main);
@@ -77,12 +72,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 if (scanFiles.size()==0){
-                    Snackbar.make(view, "Pick atleast 1 file/folder", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                    Snackbar.make(view, R.string.pick_at_least, Snackbar.LENGTH_LONG)
+                        .setAction("", null).show();
                 }
                 else {
                     Intent intent = new Intent(MainActivity.this,SearchActivity.class);
-                    intent.putExtra("DATA",scanFiles);
+                    intent.putExtra(getString(R.string.bundle_key),scanFiles);
                     MainActivity.this.startActivity(intent);
                 }
 
@@ -93,12 +88,12 @@ public class MainActivity extends AppCompatActivity
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DummyContent.ClearItems();
+                FileContent.clearItems();
                 root = Environment.getExternalStorageDirectory();
-                DummyContent.addItem(DummyContent.createDummyItem("..",root.getParent(),0,false,true));
+                FileContent.addItem(FileContent.createFileItem(getString(R.string.parent_directory),root.getParent(),0, true));
                 ScanFolder(root);
                 TextView textView =(TextView) findViewById(R.id.PathOfFiles);
-                textView.setText("Current directory:\n"+root.getAbsolutePath());
+                textView.setText(getString(R.string.current_directory,root.getAbsolutePath()));
                 ItemFragment fragment = (ItemFragment) getFragmentManager().findFragmentById(R.id.fragment);
                 fragment.UpdateItems();
             }
@@ -110,7 +105,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public static void ScanFolder(File root) {
+    private static void ScanFolder(File root) {
         File[] list = root.listFiles();
 
         int i = 0;
@@ -119,28 +114,28 @@ public class MainActivity extends AppCompatActivity
                 i++;
                 if (f.isDirectory()) {
                     Log.d("walker", "Dir: " + f.getAbsoluteFile());
-                    DummyContent.addItem(DummyContent.createDummyItem(f.getName(), f.getAbsolutePath(),i,false,true));
+                    FileContent.addItem(FileContent.createFileItem(f.getName(), f.getAbsolutePath(),i, true));
                 }
                 else {
                     Log.d("walker", "File: " + f.getAbsoluteFile());
-                    DummyContent.addItem(DummyContent.createDummyItem(f.getName(), f.getAbsolutePath(),i,false,false));
+                    FileContent.addItem(FileContent.createFileItem(f.getName(), f.getAbsolutePath(),i, false));
                 }
             }
         }
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(FileContent.FileItem item) {
         Log.d("FragmentInteraction", "onListFragmentInteraction() called with: item = [" + item + "]");
         if (item.path == null) {
             return;
         }
         if (item.isDirectory){
-            DummyContent.ClearItems();
+            FileContent.clearItems();
             TextView textView =(TextView) findViewById(R.id.PathOfFiles);
-            textView.setText("Current directory:\n"+item.path);
+            textView.setText(getString(R.string.current_directory,item.path));
             root = new File(item.path);
-            DummyContent.addItem(DummyContent.createDummyItem("..",root.getParent(),0,false,true));
+            FileContent.addItem(FileContent.createFileItem(getString(R.string.parent_directory),root.getParent(),0, true));
             ScanFolder(root);
             ItemFragment fragment = (ItemFragment) getFragmentManager().findFragmentById(R.id.fragment);
             fragment.UpdateItems();

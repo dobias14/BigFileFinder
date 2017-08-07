@@ -5,4 +5,27 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <plurals name="numberOfFiles">
+        <item quantity="one">%1$d item selected</item>
+        <item quantity="other">%1$d items selected</item>
+    </plurals>
+    <string name="logo">Logo</string>
+    <string name="folder_icon">Folder Icon</string>
+    <string name="current_directory">Current directory:\n %1$s</string>
+    <string name="search">Search</string>
+    <string name="cancel">Cancel</string>
+    <string name="Default_0_items_selected">0 items selected</string>
+    <string name="Default_current_directory_n_storage_emulated_0">Current directory: /storage/emulated/0/</string>
+    <string name="name">Name</string>
+    <string name="path">Path</string>
+    <string name="android_studio">Android Studio</string>
+    <string name="email">android.studio@android.com</string>
+    <string name="pick_at_least">Pick at least 1 file/folder</string>
+    <string translatable="false" name="parent_directory">..</string>
+    <string name="search_canceled">Search canceled</string>
+    <string name="search_time">Time of search: %1$.3f sec</string>
+    <string translatable="false" name="bundle_key">DATA</string>
+    <string name="paths_and_sizes">%1$d. %2$s\n size:  %3$s Bytes\n\n</string>
+    <string name="adding_files">%1$s added</string>
+    <string name="removing_files">%1$s removed</string>
 </resources>

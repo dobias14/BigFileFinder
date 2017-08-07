@@ -31,15 +31,14 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/text_margin"
-
-            android:text="0 items selected" />
+            android:text="@string/Default_0_items_selected" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/PathOfFiles"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/text_margin"
-            android:text="Current directory:\n/storage/emulated/0/" />
+            android:text="@string/Default_current_directory_n_storage_emulated_0" />
     </android.support.v7.widget.LinearLayoutCompat>
 
 

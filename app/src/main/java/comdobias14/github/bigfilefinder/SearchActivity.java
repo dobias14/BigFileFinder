@@ -2,6 +2,7 @@ package comdobias14.github.bigfilefinder;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,10 +23,10 @@ public class SearchActivity extends AppCompatActivity {
     private static ArrayList<File> filesFound;
     private static int numberOfFilesPicked;
 
-    private Handler handlerForProgressBar;
+    private final Handler handlerForProgressBar;
     private ProgressBar progressBar;
     private TextView textViewProgress;
-    private Thread vlakno;
+    private Thread searchingThread;
     private long startTime;
     private long stopTime;
     private long elapsedTime;
@@ -38,14 +39,13 @@ public class SearchActivity extends AppCompatActivity {
         textViewProgress = null;
     }
 
-    //TODO: Refactor
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
         //noinspection unchecked
-        filesToBeSearched = (ArrayList<File>) getIntent().getExtras().getSerializable("DATA");
+        filesToBeSearched = (ArrayList<File>) getIntent().getExtras().getSerializable(getString(R.string.bundle_key));
 
         //Setup progressBar
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -80,7 +80,7 @@ public class SearchActivity extends AppCompatActivity {
                 progressBar.setProgress(0);
 
                 //Search
-                vlakno = new Thread(new Runnable() {
+                searchingThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         //Walker
@@ -102,7 +102,6 @@ public class SearchActivity extends AppCompatActivity {
                                 public void run() {
                                     progressBar.setProgress(finalStart);
                                     textViewProgress.setText(finalFile.getAbsolutePath());
-                                    //Toast.makeText(SearchActivity.this, finalStart+"", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -111,11 +110,9 @@ public class SearchActivity extends AppCompatActivity {
                         String text = "";
                         String sizeOfFile;
                         for (File file : filesFound) {
-                            sizeOfFile = new StringBuilder(file.length() + "").reverse().toString();
-                            sizeOfFile = sizeOfFile.replaceAll("(\\d{3})","$1 ").trim();
-                            sizeOfFile = new StringBuilder(sizeOfFile).reverse().toString();
+                            sizeOfFile = getSizeOfFileFormatted(file);
                             Log.d("sizeOfFile", "run: "+sizeOfFile);
-                            text+= counter+". "+file.getAbsolutePath()+"\nsize:  "+ sizeOfFile +" Bytes"+"\n\n";
+                            text+= getString(R.string.paths_and_sizes,counter,file.getAbsolutePath(),sizeOfFile);
                             counter++;
                         }
                         final String finalText = text;
@@ -131,13 +128,22 @@ public class SearchActivity extends AppCompatActivity {
                         handlerForProgressBar.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(SearchActivity.this, "Time of search: "+ elapsedTime/1000.0+" sec", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SearchActivity.this, getString(R.string.search_time,elapsedTime/1000.0), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
+
+                    @NonNull
+                    private String getSizeOfFileFormatted(File file) {
+                        String sizeOfFile;
+                        sizeOfFile = new StringBuilder(file.length() + "").reverse().toString();
+                        sizeOfFile = sizeOfFile.replaceAll("(\\d{3})","$1 ").trim();
+                        sizeOfFile = new StringBuilder(sizeOfFile).reverse().toString();
+                        return sizeOfFile;
+                    }
                 });
                 startTime = System.currentTimeMillis();
-                vlakno.start();
+                searchingThread.start();
             }
         });
         //Setup CancelButton
@@ -145,12 +151,12 @@ public class SearchActivity extends AppCompatActivity {
         CancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (vlakno != null){
-                    vlakno.interrupt();
-                    if (vlakno.isInterrupted()){
-                        Toast.makeText(SearchActivity.this, "Search canceled", Toast.LENGTH_SHORT).show();
+                if (searchingThread != null){
+                    searchingThread.interrupt();
+                    if (searchingThread.isInterrupted()){
+                        Toast.makeText(SearchActivity.this, R.string.search_canceled, Toast.LENGTH_SHORT).show();
                     }
-                };
+                }
             }
         });
     }
@@ -158,12 +164,12 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (vlakno != null) {
-            vlakno.interrupt();
+        if (searchingThread != null) {
+            searchingThread.interrupt();
         }
     }
 
-    public static void walker(File root) {
+    private static void walker(File root) {
         File[] list = new File[1];
         if (root.isDirectory()) {
             list = root.listFiles();
@@ -173,8 +179,6 @@ public class SearchActivity extends AppCompatActivity {
         ArrayList<File> filesInDirectory = new ArrayList<>();
 
         if (list != null) {
-
-            //File[] files = new File[0];
             for (File f : list) {
                 if (f.isDirectory()) {
                     Log.d("walker", "Dir: " + f.getAbsoluteFile());
@@ -194,12 +198,12 @@ public class SearchActivity extends AppCompatActivity {
                         return (int)(o2.length() - o1.length());
                     }
                 });
-                ArrayList<File> tempfiles = new ArrayList<>();
+                ArrayList<File> collectFiles = new ArrayList<>();
                 for (int i = 0; i < numberOfFilesPicked ; i++) {
-                    tempfiles.add(filesFound.get(i));
+                    collectFiles.add(filesFound.get(i));
                 }
                 filesFound.clear();
-                filesFound.addAll(tempfiles);
+                filesFound.addAll(collectFiles);
             }
             Collections.sort(filesFound, new Comparator<File>() {
                 @Override
