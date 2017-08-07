@@ -52,6 +52,10 @@ For Android platform, it is possible to use any SDK (4.0 and higher).
 
 *Screen with selected folders and picker with number of files to be filtered. Below that is result of the search*
 
+![Screen3.gif](https://github.com/dobias14/BigFileFinder/blob/master/Screen3.gif)
+
+*Animation of working application.*
+
 * * *
 
 The reasons for creating this project are explained more here: [Mobile Developer for Android](https://join.eset.com/en/challenges/mobile-developer-android)![Enjoy safer technology](http://www.eset-la.com/images/logo-eset-facebook.png)
