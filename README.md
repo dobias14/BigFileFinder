@@ -54,7 +54,7 @@ For Android platform, it is possible to use any SDK (4.0 and higher).
 
 * * *
 
-The reasons for creating this project are explained more here: [Mobile Developer for Android](https://join.eset.com/en/challenges/mobile-developer-androi)![Enjoy safer technology](http://www.eset-la.com/images/logo-eset-facebook.png)
+The reasons for creating this project are explained more here: [Mobile Developer for Android](https://join.eset.com/en/challenges/mobile-developer-android)![Enjoy safer technology](http://www.eset-la.com/images/logo-eset-facebook.png)
 
 
 

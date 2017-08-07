@@ -42,6 +42,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
+        if (holder.mItem.path == null){
+            return;
+        }
         holder.mIdView.setText(mValues.get(position).name);
         holder.mContentView.setText(mValues.get(position).path+"");
         if (mValues.get(position).checked){
@@ -52,23 +55,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
                         new File(String.valueOf(Uri.parse(holder.mItem.path)))
                 )
         );
-        if(holder.mItem.name.equals("..")){
+        if (position == 0){
             holder.mCheckBox.setVisibility(View.INVISIBLE);
         }
-
-        //holder.mCheckBox.setChecked(mValues.get(position).checked);
-
-        /*
-        holder.mCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (holder.mCheckBox.isChecked())
-                    holder.mCheckBox.setChecked(true);
-                else
-                    holder.mCheckBox.setChecked(false);
-            }
-        });
-        */
 
         if (mValues.get(position).isDirectory){
             holder.mIcon.setImageResource(R.drawable.ic_folder_black_24dp);

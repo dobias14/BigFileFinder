@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,13 +18,17 @@ import java.util.Comparator;
 
 public class SearchActivity extends AppCompatActivity {
 
-    ArrayList<File> filesToBeSearched;
-    static ArrayList<File> filesFound;
+    private ArrayList<File> filesToBeSearched;
+    private static ArrayList<File> filesFound;
     private static int numberOfFilesPicked;
 
-    Handler handlerForProgressBar;
+    private Handler handlerForProgressBar;
     private ProgressBar progressBar;
     private TextView textViewProgress;
+    private Thread vlakno;
+    private long startTime;
+    private long stopTime;
+    private long elapsedTime;
 
     public SearchActivity() {
         filesToBeSearched = null;
@@ -39,6 +44,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        //noinspection unchecked
         filesToBeSearched = (ArrayList<File>) getIntent().getExtras().getSerializable("DATA");
 
         //Setup progressBar
@@ -72,17 +78,25 @@ public class SearchActivity extends AppCompatActivity {
                 textView1.setText("");
                 filesFound = new ArrayList<>();
                 progressBar.setProgress(0);
-                new Thread(new Runnable() {
+
+                //Search
+                vlakno = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         //Walker
                         int start = 0;
                         int end = filesToBeSearched.size();
                         for (File file : filesToBeSearched) {
+                            if (Thread.interrupted()) {
+                                return;
+                            }
                             walker(file);
                             start++;
                             final int finalStart = start*100/end;
                             final File finalFile = file;
+                            if (Thread.interrupted()) {
+                                return;
+                            }
                             handlerForProgressBar.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -95,8 +109,13 @@ public class SearchActivity extends AppCompatActivity {
                         //Fill up textView1
                         int counter = 1;
                         String text = "";
+                        String sizeOfFile;
                         for (File file : filesFound) {
-                            text+= counter+". "+file.getAbsolutePath()+" size: "+ file.length() +" Bytes"+"\n";
+                            sizeOfFile = new StringBuilder(file.length() + "").reverse().toString();
+                            sizeOfFile = sizeOfFile.replaceAll("(\\d{3})","$1 ").trim();
+                            sizeOfFile = new StringBuilder(sizeOfFile).reverse().toString();
+                            Log.d("sizeOfFile", "run: "+sizeOfFile);
+                            text+= counter+". "+file.getAbsolutePath()+"\nsize:  "+ sizeOfFile +" Bytes"+"\n\n";
                             counter++;
                         }
                         final String finalText = text;
@@ -106,16 +125,51 @@ public class SearchActivity extends AppCompatActivity {
                                 textView1.setText(finalText);
                             }
                         });
+                        stopTime = System.currentTimeMillis();
+                        elapsedTime = stopTime - startTime;
 
+                        handlerForProgressBar.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SearchActivity.this, "Time of search: "+ elapsedTime/1000.0+" sec", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                }).start();
+                });
+                startTime = System.currentTimeMillis();
+                vlakno.start();
+            }
+        });
+        //Setup CancelButton
+        Button CancelButton = (Button) findViewById(R.id.CancelButton);
+        CancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (vlakno != null){
+                    vlakno.interrupt();
+                    if (vlakno.isInterrupted()){
+                        Toast.makeText(SearchActivity.this, "Search canceled", Toast.LENGTH_SHORT).show();
+                    }
+                };
             }
         });
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (vlakno != null) {
+            vlakno.interrupt();
+        }
+    }
+
     public static void walker(File root) {
-        //android.os.SystemClock.sleep(500);
-        File[] list = root.listFiles();
+        File[] list = new File[1];
+        if (root.isDirectory()) {
+            list = root.listFiles();
+        }else{
+            list[0] = root;
+        }
         ArrayList<File> filesInDirectory = new ArrayList<>();
 
         if (list != null) {
@@ -130,10 +184,29 @@ public class SearchActivity extends AppCompatActivity {
                     Log.d("walker", "File: " + f.getAbsoluteFile() + " size: "+f.length());
                     filesInDirectory.add(f);
                 }
-            } //(int)o2.length() - (int)o1.length();
-            //filesInDirectory.toArray(files)
+            }
             SortAndPick(filesInDirectory,filesFound);
-            SortAndPick(filesFound,filesFound);
+
+            if (filesFound.size() > numberOfFilesPicked){
+                Collections.sort(filesFound, new Comparator<File>() {
+                    @Override
+                    public int compare(File o1, File o2) {
+                        return (int)(o2.length() - o1.length());
+                    }
+                });
+                ArrayList<File> tempfiles = new ArrayList<>();
+                for (int i = 0; i < numberOfFilesPicked ; i++) {
+                    tempfiles.add(filesFound.get(i));
+                }
+                filesFound.clear();
+                filesFound.addAll(tempfiles);
+            }
+            Collections.sort(filesFound, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
+                    return (int)(o2.length() - o1.length());
+                }
+            });
 
 
         }
